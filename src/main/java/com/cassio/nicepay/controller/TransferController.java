@@ -1,0 +1,5 @@
+package com.cassio.nicepay.controller;
+
+public class TransferController {
+
+}
