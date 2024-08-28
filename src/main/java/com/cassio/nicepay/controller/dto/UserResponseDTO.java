@@ -1,6 +1,5 @@
 package com.cassio.nicepay.controller.dto;
 
-import com.cassio.nicepay.entity.User;
 import com.cassio.nicepay.entity.UserType;
 
 public class UserResponseDTO {

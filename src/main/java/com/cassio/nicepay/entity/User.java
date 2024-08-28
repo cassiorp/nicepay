@@ -39,6 +39,13 @@ public class User {
     this.userType = userType;
   }
 
+  public User(String fullName, String document, String email, String password) {
+    this.fullName = fullName;
+    this.document = document;
+    this.email = email;
+    this.password = password;
+  }
+
   public String getId() {
     return id;
   }
