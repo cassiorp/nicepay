@@ -17,6 +17,7 @@ public class User {
   private String email;
   private String password;
   private UserType userType;
+  private Wallet wallet;
 
   public User() {
   }
@@ -50,47 +51,31 @@ public class User {
     return id;
   }
 
-  public void setId(String id) {
-    this.id = id;
-  }
-
   public String getFullName() {
     return fullName;
-  }
-
-  public void setFullName(String fullName) {
-    this.fullName = fullName;
   }
 
   public String getDocument() {
     return document;
   }
 
-  public void setDocument(String document) {
-    this.document = document;
-  }
-
   public String getEmail() {
     return email;
-  }
-
-  public void setEmail(String email) {
-    this.email = email;
   }
 
   public String getPassword() {
     return password;
   }
 
-  public void setPassword(String password) {
-    this.password = password;
-  }
-
   public UserType getUserType() {
     return userType;
   }
 
-  public void setUserType(UserType userType) {
-    this.userType = userType;
+  public void setWallet(Wallet wallet) {
+    this.wallet = wallet;
+  }
+
+  public Wallet getWallet() {
+    return wallet;
   }
 }

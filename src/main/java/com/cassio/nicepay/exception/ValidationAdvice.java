@@ -15,6 +15,7 @@ import java.time.ZonedDateTime;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 
 @Order(Ordered.HIGHEST_PRECEDENCE)
@@ -53,6 +54,18 @@ public class ValidationAdvice {
         ex.getMessage(),
         UNPROCESSABLE_ENTITY.value(),
         UNPROCESSABLE_ENTITY.getReasonPhrase(),
+        ZonedDateTime.now()
+    );
+  }
+
+  @ResponseStatus(NOT_FOUND)
+  @ResponseBody
+  @ExceptionHandler(UserNotFoundException.class)
+  public ApiExceptionSchema handleUserNotFoundException(UserNotFoundException ex) {
+    return new ApiExceptionSchema(
+        ex.getMessage(),
+        NOT_FOUND.value(),
+        NOT_FOUND.getReasonPhrase(),
         ZonedDateTime.now()
     );
   }

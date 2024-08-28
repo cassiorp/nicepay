@@ -10,10 +10,13 @@ import com.cassio.nicepay.controller.dto.UserResponseDTO;
 import com.cassio.nicepay.controller.dto.UserResquesDTO;
 import com.cassio.nicepay.entity.User;
 import com.cassio.nicepay.service.UserService;
+import java.math.BigDecimal;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,5 +44,10 @@ public class UserController {
   public ResponseEntity<List<UserResponseDTO>> getAll() {
     List<UserResponseDTO> users = userService.getAll().stream().map(UserConverter::toDTO).toList();
     return new ResponseEntity<>(users, OK);
+  }
+
+  @PatchMapping("/{userId}/deposit/{amount}")
+  public void deposit(@PathVariable String userId, @PathVariable BigDecimal amount) {
+    userService.deposit(userId, amount);
   }
 }

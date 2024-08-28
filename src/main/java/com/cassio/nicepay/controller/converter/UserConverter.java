@@ -29,7 +29,8 @@ public class UserConverter {
         user.getDocument(),
         user.getEmail(),
         user.getPassword(),
-        user.getUserType()
+        user.getUserType(),
+        user.getWallet()
     );
   }
 
