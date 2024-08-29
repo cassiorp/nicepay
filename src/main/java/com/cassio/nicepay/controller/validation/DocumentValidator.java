@@ -1,4 +1,4 @@
-package com.cassio.nicepay.validation;
+package com.cassio.nicepay.controller.validation;
 
 
 import static com.cassio.nicepay.util.DocumentUtil.cleanDocument;

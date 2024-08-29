@@ -1,6 +1,6 @@
 package com.cassio.nicepay.controller.dto;
 
-import com.cassio.nicepay.validation.Document;
+import com.cassio.nicepay.controller.validation.Document;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 

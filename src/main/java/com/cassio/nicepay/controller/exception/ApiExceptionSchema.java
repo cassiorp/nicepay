@@ -1,4 +1,4 @@
-package com.cassio.nicepay.exception;
+package com.cassio.nicepay.controller.exception;
 
 import java.time.ZonedDateTime;
 

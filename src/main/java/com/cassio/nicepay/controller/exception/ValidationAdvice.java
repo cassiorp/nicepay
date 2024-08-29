@@ -1,8 +1,11 @@
-package com.cassio.nicepay.exception;
+package com.cassio.nicepay.controller.exception;
 
+import com.cassio.nicepay.controller.exception.ApiExceptionSchema;
+import com.cassio.nicepay.exception.DocumentAlreadyExistsException;
+import com.cassio.nicepay.exception.EmailAlreadyExistsException;
+import com.cassio.nicepay.exception.UserNotFoundException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
