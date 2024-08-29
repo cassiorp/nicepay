@@ -11,7 +11,7 @@ import com.cassio.nicepay.entity.User;
 
 public class UserConverter {
 
-  public static User toUser(UserResquesDTO resquesDTO) {
+  public static User toEntity(UserResquesDTO resquesDTO) {
     String document = cleanDocument(resquesDTO.getDocument());
     return new User(
         resquesDTO.getFullName(),

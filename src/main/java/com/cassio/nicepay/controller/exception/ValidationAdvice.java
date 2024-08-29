@@ -3,6 +3,7 @@ package com.cassio.nicepay.controller.exception;
 import com.cassio.nicepay.controller.exception.ApiExceptionSchema;
 import com.cassio.nicepay.exception.DocumentAlreadyExistsException;
 import com.cassio.nicepay.exception.EmailAlreadyExistsException;
+import com.cassio.nicepay.exception.InsufficientBalanceException;
 import com.cassio.nicepay.exception.UserNotFoundException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -53,6 +54,18 @@ public class ValidationAdvice {
   @ResponseBody
   @ExceptionHandler(EmailAlreadyExistsException.class)
   public ApiExceptionSchema handleEmailAlreadyExistsException(EmailAlreadyExistsException ex) {
+    return new ApiExceptionSchema(
+        ex.getMessage(),
+        UNPROCESSABLE_ENTITY.value(),
+        UNPROCESSABLE_ENTITY.getReasonPhrase(),
+        ZonedDateTime.now()
+    );
+  }
+
+  @ResponseStatus(UNPROCESSABLE_ENTITY)
+  @ResponseBody
+  @ExceptionHandler(InsufficientBalanceException.class)
+  public ApiExceptionSchema handleInsufficientBalanceException(InsufficientBalanceException ex) {
     return new ApiExceptionSchema(
         ex.getMessage(),
         UNPROCESSABLE_ENTITY.value(),

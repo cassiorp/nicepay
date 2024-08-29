@@ -1,7 +1,7 @@
 package com.cassio.nicepay.controller;
 
 import static com.cassio.nicepay.controller.converter.UserConverter.toDTO;
-import static com.cassio.nicepay.controller.converter.UserConverter.toUser;
+import static com.cassio.nicepay.controller.converter.UserConverter.toEntity;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 
@@ -36,7 +36,7 @@ public class UserController {
   public ResponseEntity<UserResponseDTO> create(
       @RequestBody @Validated UserResquesDTO userResquesDTO
   ) {
-    User user = userService.create(toUser(userResquesDTO));
+    User user = userService.create(toEntity(userResquesDTO));
     return new ResponseEntity<>(toDTO(user), CREATED);
   }
 

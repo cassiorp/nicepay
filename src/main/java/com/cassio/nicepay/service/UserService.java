@@ -24,17 +24,12 @@ public class UserService {
     this.userRepository = userRepository;
   }
 
+  //TODO Hash de senha
   @Transactional
   public User create(User user) {
     validateUniqueFields(user);
-
-    try {
-      user.setWallet(new Wallet(BigDecimal.ZERO));
-      return userRepository.save(user);
-    } catch (RuntimeException e) {
-      logger.error("Error creating user: {}", e.getMessage(), e);
-      throw new BusinessException();
-    }
+    user.setWallet(new Wallet(BigDecimal.ZERO));
+    return save(user);
   }
 
   private void validateUniqueFields(User user) {
@@ -52,16 +47,35 @@ public class UserService {
 
   @Transactional
   public void deposit(String userId, BigDecimal amount) {
-    User user = userRepository.findById(userId)
-        .orElseThrow(() -> new UserNotFoundException(userId));
-
+    User user = findUserById(userId);
     Wallet wallet = user.getWallet();
     wallet.setBalance(wallet.getBalance().add(amount));
+    save(user);
+  }
 
+  @Transactional
+  public void deposit(User user, BigDecimal amount) {
+    Wallet wallet = user.getWallet();
+    wallet.setBalance(wallet.getBalance().add(amount));
+    save(user);
+  }
+
+  @Transactional
+  public void withdrawal(User user, BigDecimal amount) {
+    Wallet wallet = user.getWallet();
+    wallet.setBalance(wallet.getBalance().subtract(amount));
+    save(user);
+  }
+
+  public User findUserById(String id) {
+    return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
+  }
+
+  public User save(User user) {
     try {
-      userRepository.save(user);
+      return userRepository.save(user);
     } catch (RuntimeException e) {
-      logger.error("Error depositing amount: {}", e.getMessage(), e);
+      logger.error("Error saving user: {}", e.getMessage());
       throw new BusinessException();
     }
   }
