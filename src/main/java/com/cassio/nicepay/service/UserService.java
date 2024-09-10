@@ -5,6 +5,7 @@ import com.cassio.nicepay.entity.Wallet;
 import com.cassio.nicepay.exception.BusinessException;
 import com.cassio.nicepay.exception.DocumentAlreadyExistsException;
 import com.cassio.nicepay.exception.EmailAlreadyExistsException;
+import com.cassio.nicepay.exception.InsufficientBalanceException;
 import com.cassio.nicepay.exception.UserNotFoundException;
 import com.cassio.nicepay.repository.UserRepository;
 import java.math.BigDecimal;
@@ -62,9 +63,16 @@ public class UserService {
 
   @Transactional
   public void withdrawal(User user, BigDecimal amount) {
+    validateBalance(user, amount);
     Wallet wallet = user.getWallet();
     wallet.setBalance(wallet.getBalance().subtract(amount));
     save(user);
+  }
+
+  private static void validateBalance(User user, BigDecimal amount) {
+    if (amount.compareTo(user.getWallet().getBalance()) > 0) {
+      throw new InsufficientBalanceException(user.getId());
+    }
   }
 
   public User findUserById(String id) {

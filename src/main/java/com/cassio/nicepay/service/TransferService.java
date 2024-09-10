@@ -1,13 +1,12 @@
 package com.cassio.nicepay.service;
 
-import static com.cassio.nicepay.entity.Situation.EFFECTED;
-import static com.cassio.nicepay.entity.Situation.REFUSED;
+import static com.cassio.nicepay.entity.Situation.COMPLETED;
+import static com.cassio.nicepay.entity.Situation.PENDING;
 import static com.cassio.nicepay.entity.UserType.BUSINESS;
 
 import com.cassio.nicepay.entity.Transfer;
 import com.cassio.nicepay.entity.User;
 import com.cassio.nicepay.exception.BusinessUserTransferException;
-import com.cassio.nicepay.exception.InsufficientBalanceException;
 import com.cassio.nicepay.repository.TransferRepository;
 import java.util.List;
 import org.springframework.stereotype.Service;
@@ -26,25 +25,25 @@ public class TransferService {
 
   @Transactional
   public Transfer transfer(Transfer transfer) {
-    transfer.setSituation(REFUSED);
+    transfer.setSituation(PENDING);
     transferRepository.save(transfer);
 
     User payer = userService.findUserById(transfer.getPayer());
+    validatePayer(payer);
 
-    if (payer.getUserType().equals(BUSINESS)) {
-      throw new BusinessUserTransferException(payer.getId());
-    }
-
-    if (transfer.getValue().compareTo(payer.getWallet().getBalance()) > -1) {
-      throw new InsufficientBalanceException(payer.getId());
-    }
-
-    User payee = userService.findUserById(transfer.getPayee());
+    User payee =  userService.findUserById(transfer.getPayee());
 
     userService.withdrawal(payer, transfer.getValue());
     userService.deposit(payee, transfer.getValue());
-    transfer.setSituation(EFFECTED);
+    transfer.setSituation(COMPLETED);
+
     return transferRepository.save(transfer);
+  }
+
+  private void validatePayer(User payer) {
+    if (payer.getUserType() == BUSINESS) {
+      throw new BusinessUserTransferException(payer.getId());
+    }
   }
 
   public List<Transfer> getAll() {
