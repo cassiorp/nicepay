@@ -4,7 +4,7 @@ import com.cassio.nicepay.controller.validation.Document;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
-public class UserResquesDTO {
+public class UserRequestDTO {
 
   @NotBlank
   private String fullName;
@@ -16,7 +16,7 @@ public class UserResquesDTO {
   @NotBlank
   private String password;
 
-  public UserResquesDTO(String fullName, String document, String email, String password) {
+  public UserRequestDTO(String fullName, String document, String email, String password) {
     this.fullName = fullName;
     this.document = document;
     this.email = email;

@@ -25,12 +25,16 @@ public class UserService {
     this.userRepository = userRepository;
   }
 
-  //TODO Hash de senha
   @Transactional
   public User create(User user) {
     validateUniqueFields(user);
+    user.setPassword(hashPassword(user.getPassword()));
     user.setWallet(new Wallet(BigDecimal.ZERO));
     return save(user);
+  }
+
+  private static String hashPassword(String password) {
+    return String.valueOf(password.hashCode());
   }
 
   private void validateUniqueFields(User user) {

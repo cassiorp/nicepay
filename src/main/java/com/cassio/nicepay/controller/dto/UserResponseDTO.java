@@ -4,21 +4,20 @@ import com.cassio.nicepay.entity.UserType;
 import com.cassio.nicepay.entity.Wallet;
 
 public class UserResponseDTO {
+
   private String id;
   private String fullName;
   private String document;
   private String email;
-  private String password;
   private UserType userType;
   private Wallet wallet;
 
-  public UserResponseDTO(String id, String fullName, String document, String email, String password,
+  public UserResponseDTO(String id, String fullName, String document, String email,
       UserType userType, Wallet wallet) {
     this.id = id;
     this.fullName = fullName;
     this.document = document;
     this.email = email;
-    this.password = password;
     this.userType = userType;
     this.wallet = wallet;
   }
@@ -40,10 +39,6 @@ public class UserResponseDTO {
 
   public String getEmail() {
     return email;
-  }
-
-  public String getPassword() {
-    return password;
   }
 
   public UserType getUserType() {

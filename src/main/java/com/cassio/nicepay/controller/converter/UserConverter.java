@@ -6,12 +6,12 @@ import static com.cassio.nicepay.util.DocumentUtil.cleanDocument;
 import static com.cassio.nicepay.util.DocumentUtil.isCPF;
 
 import com.cassio.nicepay.controller.dto.UserResponseDTO;
-import com.cassio.nicepay.controller.dto.UserResquesDTO;
+import com.cassio.nicepay.controller.dto.UserRequestDTO;
 import com.cassio.nicepay.entity.User;
 
 public class UserConverter {
 
-  public static User toEntity(UserResquesDTO resquesDTO) {
+  public static User toEntity(UserRequestDTO resquesDTO) {
     String document = cleanDocument(resquesDTO.getDocument());
     return new User(
         resquesDTO.getFullName(),
@@ -28,7 +28,6 @@ public class UserConverter {
         user.getFullName(),
         user.getDocument(),
         user.getEmail(),
-        user.getPassword(),
         user.getUserType(),
         user.getWallet()
     );
