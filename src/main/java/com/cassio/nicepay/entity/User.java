@@ -40,11 +40,25 @@ public class User {
     this.userType = userType;
   }
 
-  public User(String fullName, String document, String email, String password) {
+  public User(String fullName, String document, String email, String password, UserType userType,
+      Wallet wallet) {
     this.fullName = fullName;
     this.document = document;
     this.email = email;
     this.password = password;
+    this.userType = userType;
+    this.wallet = wallet;
+  }
+
+  public User(String id, String fullName, String document, String email, String password,
+      UserType userType, Wallet wallet) {
+    this.id = id;
+    this.fullName = fullName;
+    this.document = document;
+    this.email = email;
+    this.password = password;
+    this.userType = userType;
+    this.wallet = wallet;
   }
 
   public String getId() {
@@ -82,4 +96,5 @@ public class User {
   public Wallet getWallet() {
     return wallet;
   }
+
 }

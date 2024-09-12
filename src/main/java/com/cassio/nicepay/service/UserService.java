@@ -58,15 +58,10 @@ public class UserService {
     save(user);
   }
 
-  @Transactional
-  public void deposit(User user, BigDecimal amount) {
-    Wallet wallet = user.getWallet();
-    wallet.setBalance(wallet.getBalance().add(amount));
-    save(user);
-  }
 
   @Transactional
-  public void withdrawal(User user, BigDecimal amount) {
+  public void withdrawal(String userId, BigDecimal amount) {
+    User user = findUserById(userId);
     validateBalance(user, amount);
     Wallet wallet = user.getWallet();
     wallet.setBalance(wallet.getBalance().subtract(amount));
@@ -83,7 +78,7 @@ public class UserService {
     return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
   }
 
-  public User save(User user) {
+  private User save(User user) {
     try {
       return userRepository.save(user);
     } catch (RuntimeException e) {

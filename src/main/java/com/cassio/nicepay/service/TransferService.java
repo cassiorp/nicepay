@@ -31,10 +31,8 @@ public class TransferService {
     User payer = userService.findUserById(transfer.getPayer());
     validatePayer(payer);
 
-    User payee =  userService.findUserById(transfer.getPayee());
-
-    userService.withdrawal(payer, transfer.getValue());
-    userService.deposit(payee, transfer.getValue());
+    userService.withdrawal(payer.getId(), transfer.getValue());
+    userService.deposit(transfer.getPayee(), transfer.getValue());
     transfer.setSituation(COMPLETED);
 
     return transferRepository.save(transfer);
