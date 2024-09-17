@@ -23,6 +23,14 @@ public class Transfer {
     this.payee = payee;
   }
 
+  public Transfer(String id, BigDecimal value, String payer, String payee, Situation situation) {
+    this.id = id;
+    this.value = value;
+    this.payer = payer;
+    this.payee = payee;
+    this.situation = situation;
+  }
+
   public BigDecimal getValue() {
     return value;
   }
