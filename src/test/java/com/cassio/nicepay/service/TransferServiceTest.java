@@ -9,18 +9,18 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.OK;
 
-import com.cassio.nicepay.entity.Situation;
+import com.cassio.nicepay.client.AuthorizeClient;
 import com.cassio.nicepay.entity.Transfer;
 import com.cassio.nicepay.entity.User;
 import com.cassio.nicepay.entity.UserType;
 import com.cassio.nicepay.entity.Wallet;
 import com.cassio.nicepay.exception.BusinessUserTransferException;
-import com.cassio.nicepay.exception.InsufficientBalanceException;
+import com.cassio.nicepay.exception.ForbiddenException;
 import com.cassio.nicepay.repository.TransferRepository;
-import com.cassio.nicepay.repository.UserRepository;
 import java.math.BigDecimal;
-import java.rmi.server.UID;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -29,6 +29,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.ResponseEntity;
 
 @ExtendWith(MockitoExtension.class)
 public class TransferServiceTest {
@@ -37,6 +38,8 @@ public class TransferServiceTest {
   private UserService userService;
   @Mock
   private TransferRepository transferRepository;
+  @Mock
+  private AuthorizeClient authorizeClient;
   @InjectMocks
   private TransferService transferService;
 
@@ -54,6 +57,7 @@ public class TransferServiceTest {
 
     when(transferRepository.save(transfer)).thenReturn(transfer);
     when(userService.findUserById(transfer.getPayer())).thenReturn(payer);
+    when(authorizeClient.authorize()).thenReturn(new ResponseEntity<>(OK));
 
     Transfer transferCompleted = transferService.transfer(transfer);
 
@@ -76,6 +80,7 @@ public class TransferServiceTest {
 
     when(transferRepository.save(transfer)).thenReturn(transfer);
     when(userService.findUserById(transfer.getPayer())).thenReturn(payer);
+    when(authorizeClient.authorize()).thenReturn(new ResponseEntity<>(OK));
 
     BusinessUserTransferException throwable = catchThrowableOfType(
         () -> transferService.transfer(transfer),
@@ -85,6 +90,27 @@ public class TransferServiceTest {
     assertThat(throwable.getClass(), equalTo(BusinessUserTransferException.class));
     assertThat(throwable.getMessage(), equalTo("Business user cannot transfer: " + payer.getId()));
     assertThat(transfer.getSituation(), equalTo(PENDING));
+  }
+
+  @Test
+  void shouldThrowForbiddenException() {
+    User payer = mockPayerBusiness();
+    User payee = mockPayee();
+
+    Transfer transfer = new Transfer(
+        BigDecimal.TEN,
+        payer.getId(),
+        payee.getId()
+    );
+
+    when(authorizeClient.authorize()).thenThrow(new ForbiddenException());
+
+    ForbiddenException throwable = catchThrowableOfType(
+        () -> transferService.transfer(transfer),
+        ForbiddenException.class
+    );
+
+    assertThat(throwable.getClass(), equalTo(ForbiddenException.class));
   }
 
 

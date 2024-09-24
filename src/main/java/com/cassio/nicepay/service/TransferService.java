@@ -4,6 +4,7 @@ import static com.cassio.nicepay.entity.Situation.COMPLETED;
 import static com.cassio.nicepay.entity.Situation.PENDING;
 import static com.cassio.nicepay.entity.UserType.BUSINESS;
 
+import com.cassio.nicepay.client.AuthorizeClient;
 import com.cassio.nicepay.entity.Transfer;
 import com.cassio.nicepay.entity.User;
 import com.cassio.nicepay.exception.BusinessUserTransferException;
@@ -17,14 +18,19 @@ public class TransferService {
 
   private final TransferRepository transferRepository;
   private final UserService userService;
+  private final AuthorizeClient authorizeClient;
 
-  public TransferService(TransferRepository transferRepository, UserService userService) {
+  public TransferService(TransferRepository transferRepository, UserService userService,
+      AuthorizeClient authorizeClient) {
     this.transferRepository = transferRepository;
     this.userService = userService;
+    this.authorizeClient = authorizeClient;
   }
 
   @Transactional
   public Transfer transfer(Transfer transfer) {
+    authorizeClient.authorize();
+
     transfer.setSituation(PENDING);
     transferRepository.save(transfer);
 

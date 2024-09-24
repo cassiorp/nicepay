@@ -3,6 +3,7 @@ package com.cassio.nicepay.controller.exception;
 import com.cassio.nicepay.controller.exception.ApiExceptionSchema;
 import com.cassio.nicepay.exception.DocumentAlreadyExistsException;
 import com.cassio.nicepay.exception.EmailAlreadyExistsException;
+import com.cassio.nicepay.exception.ForbiddenException;
 import com.cassio.nicepay.exception.InsufficientBalanceException;
 import com.cassio.nicepay.exception.UserNotFoundException;
 import org.springframework.core.Ordered;
@@ -19,6 +20,7 @@ import java.time.ZonedDateTime;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 
@@ -82,6 +84,18 @@ public class ValidationAdvice {
         ex.getMessage(),
         NOT_FOUND.value(),
         NOT_FOUND.getReasonPhrase(),
+        ZonedDateTime.now()
+    );
+  }
+
+  @ResponseStatus(FORBIDDEN)
+  @ResponseBody
+  @ExceptionHandler(ForbiddenException.class)
+  public ApiExceptionSchema handleForbiddenException(ForbiddenException ex) {
+    return new ApiExceptionSchema(
+        "Access Denied",
+        FORBIDDEN.value(),
+        FORBIDDEN.getReasonPhrase(),
         ZonedDateTime.now()
     );
   }
