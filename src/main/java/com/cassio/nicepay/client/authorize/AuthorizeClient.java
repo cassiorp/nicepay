@@ -1,7 +1,7 @@
-package com.cassio.nicepay.client;
+package com.cassio.nicepay.client.authorize;
 
 import com.cassio.nicepay.client.config.FeignClientConfiguration;
-import com.cassio.nicepay.client.dto.AuthorizeDTO;
+import com.cassio.nicepay.client.authorize.dto.AuthorizeDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

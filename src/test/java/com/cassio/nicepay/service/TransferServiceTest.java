@@ -1,6 +1,7 @@
 package com.cassio.nicepay.service;
 
 import static com.cassio.nicepay.entity.Situation.COMPLETED;
+import static com.cassio.nicepay.entity.Situation.DECLINED;
 import static com.cassio.nicepay.entity.Situation.PENDING;
 import static org.assertj.core.api.AssertionsForClassTypes.catchThrowableOfType;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -9,10 +10,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.OK;
 
-import com.cassio.nicepay.client.AuthorizeClient;
+import com.cassio.nicepay.client.authorize.AuthorizeClient;
+import com.cassio.nicepay.client.notify.NotifyClient;
 import com.cassio.nicepay.entity.Transfer;
 import com.cassio.nicepay.entity.User;
 import com.cassio.nicepay.entity.UserType;
@@ -40,6 +41,8 @@ public class TransferServiceTest {
   private TransferRepository transferRepository;
   @Mock
   private AuthorizeClient authorizeClient;
+  @Mock
+  private NotifyClient notifyClient;
   @InjectMocks
   private TransferService transferService;
 
@@ -65,6 +68,7 @@ public class TransferServiceTest {
     verify(transferRepository, times(2)).save(any());
     verify(userService, times(1)).withdrawal(payer.getId(), transfer.getValue());
     verify(userService, times(1)).deposit(payee.getId(), transfer.getValue());
+    verify(notifyClient, times(1)).notifyTransfer();
   }
 
   @Test
@@ -89,7 +93,7 @@ public class TransferServiceTest {
 
     assertThat(throwable.getClass(), equalTo(BusinessUserTransferException.class));
     assertThat(throwable.getMessage(), equalTo("Business user cannot transfer: " + payer.getId()));
-    assertThat(transfer.getSituation(), equalTo(PENDING));
+    assertThat(transfer.getSituation(), equalTo(DECLINED));
   }
 
   @Test

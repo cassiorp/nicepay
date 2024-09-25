@@ -1,4 +1,4 @@
-package com.cassio.nicepay.client.dto;
+package com.cassio.nicepay.client.authorize.dto;
 
 public class Data {
   private Boolean authorization;

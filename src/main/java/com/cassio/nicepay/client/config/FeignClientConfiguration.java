@@ -1,6 +1,5 @@
 package com.cassio.nicepay.client.config;
 
-import com.cassio.nicepay.client.config.CustomErrorDecoder;
 import feign.codec.ErrorDecoder;
 import org.springframework.context.annotation.Bean;
 
