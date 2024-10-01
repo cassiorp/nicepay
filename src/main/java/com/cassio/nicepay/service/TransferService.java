@@ -9,15 +9,19 @@ import com.cassio.nicepay.client.authorize.AuthorizeClient;
 import com.cassio.nicepay.client.notify.NotifyClient;
 import com.cassio.nicepay.entity.Transfer;
 import com.cassio.nicepay.entity.User;
+import com.cassio.nicepay.exception.BusinessException;
 import com.cassio.nicepay.exception.BusinessUserTransferException;
 import com.cassio.nicepay.repository.TransferRepository;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TransferService {
 
+  private static final Logger logger = LoggerFactory.getLogger(UserService.class);
   private final TransferRepository transferRepository;
   private final UserService userService;
   private final AuthorizeClient authorizeClient;
@@ -33,34 +37,59 @@ public class TransferService {
 
   @Transactional
   public Transfer transfer(Transfer transfer) {
+    logger.debug("Starting transfer: {}", transfer);
+
     authorizeClient.authorize();
 
     User payer = userService.findUserById(transfer.getPayer());
 
-    if(isValidPayer(payer)){
-      transfer.setSituation(PENDING);
-      transferRepository.save(transfer);
+    transfer = preProcess(transfer);
 
-      userService.withdrawal(payer.getId(), transfer.getValue());
-      userService.deposit(transfer.getPayee(), transfer.getValue());
-      transfer.setSituation(COMPLETED);
-
-      transfer = transferRepository.save(transfer);
+    if (isValidPayer(payer)) {
+      transfer = processTransfer(transfer, payer);
       notifyClient.notifyTransfer();
-      return transfer;
-    }else{
-      transfer.setSituation(DECLINED);
-      transferRepository.save(transfer);
+      logger.debug("transfer processed: {}", transfer);
+    } else {
+      transfer = declineTransfer(transfer, payer);
+      logger.error("transfer declined: {}", transfer);
       throw new BusinessUserTransferException(payer.getId());
     }
 
+    return transfer;
+  }
+
+  private Transfer preProcess(Transfer transfer) {
+    transfer.setSituation(PENDING);
+    return transferRepository.save(transfer);
+  }
+
+  private Transfer declineTransfer(Transfer transfer, User payer) {
+    transfer.setSituation(DECLINED);
+    return transferRepository.save(transfer);
+  }
+
+  private Transfer processTransfer(Transfer transfer, User payer) {
+    userService.withdrawal(payer.getId(), transfer.getValue());
+    userService.deposit(transfer.getPayee(), transfer.getValue());
+    transfer.setSituation(COMPLETED);
+    transfer = transferRepository.save(transfer);
+    return transfer;
+  }
+
+  public List<Transfer> getAll() {
+    return transferRepository.findAll();
   }
 
   private boolean isValidPayer(User payer) {
     return payer.getUserType() != BUSINESS;
   }
 
-  public List<Transfer> getAll() {
-    return transferRepository.findAll();
+  private Transfer save(Transfer transfer) {
+    try {
+      return transferRepository.save(transfer);
+    } catch (RuntimeException e) {
+      logger.error("Error saving transfer: {}", e.getMessage());
+      throw new BusinessException();
+    }
   }
 }
